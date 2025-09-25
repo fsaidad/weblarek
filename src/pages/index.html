@@ -39,18 +39,18 @@
 		</div>
 	</div>
 
-	<div class="modal modal_active">
+	<div class="modal"> <!-- modal_active -->
 		<div class="modal__container">
 			<button class="modal__close" aria-label="закрыть"></button>
 			<div class="modal__content">
 				<div class="card card_full">
 					<img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
 					<div class="card__column">
-						<span class="card__category card__category_other">другое</span>
+						<span class="card__category">другое</span>
 						<h2 class="card__title">Бэкенд-антистресс</h2>
 						<p class="card__text">Если планируете решать задачи в тренажёре, берите два.</p>
 						<div class="card__row">
-							<button class="button">В корзину</button>
+							<button class="button buttonInBasket">В корзину</button>
 							<span class="card__price">1000 синапсов</span>
 						</div>
 					</div>
@@ -86,7 +86,7 @@
 						</li>
 					</ul>
 					<div class="modal__actions">
-						<button class="button">Оформить</button>
+						<button class="button button__order">Оформить</button>
 						<span class="basket__price">153 250 синапсов</span>
 					</div>
 				</div>
@@ -109,7 +109,7 @@
 						</div>
 						<label class="order__field">
 							<span class="form__label modal__title">Адрес доставки</span>
-							<input class="form__input" type="text" placeholder="Введите адрес" />
+							<input class="form__input" type="text" name="adress" placeholder="Введите адрес" />
 						</label>
 					</div>
 					<div class="modal__actions">
@@ -166,7 +166,7 @@
 
 	<template id="card-catalog">
 		<button class="gallery__item card">
-			<span class="card__category card__category_soft">софт-скил</span>
+			<span class="card__category">софт-скил</span>
 			<h2 class="card__title">+1 час в сутках</h2>
 			<img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
 			<span class="card__price">750 синапсов</span>
@@ -177,7 +177,7 @@
 		<div class="card card_full">
 			<img class="card__image" src="<%=require('../images/Subtract.svg')%>" alt="" />
 			<div class="card__column">
-				<span class="card__category card__category_other">другое</span>
+				<span class="card__category">другое</span>
 				<h2 class="card__title">Бэкенд-антистресс</h2>
 				<p class="card__text">Если планируете решать задачи в тренажёре, берите два.</p>
 				<div class="card__row">
@@ -224,7 +224,7 @@
 				</label>
 			</div>
 			<div class="modal__actions">
-				<button type="submit" disabled class="button order__button">Далее</button>
+				<button type="submit"  class="button order__button">Далее</button>
 				<span class="form__errors"></span>
 			</div>
 		</form>
@@ -243,7 +243,7 @@
 				</label>
 			</div>
 			<div class="modal__actions">
-				<button type="submit" disabled class="button">Оплатить</button>
+				<button type="submit"  class="button">Оплатить</button>
 				<span class="form__errors"></span>
 			</div>
 		</form>
