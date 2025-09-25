@@ -1,6 +1,6 @@
 import { IEvents } from "../base/events";
 import { Component } from "./Component";
- export interface IForm{
+interface IForm{
     error: string[];
     valid:boolean;
 

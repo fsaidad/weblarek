@@ -1,11 +1,12 @@
-import { IBasketModel, IProduct, OrderData,  } from "../../types";
+import { IBasketModel, IProduct, UserData,   } from "../../types";
 import { IEvents } from "../base/events";
 
 export class BasketModel implements IBasketModel {
 protected basket: IProduct[] = [];
-protected order: Partial<OrderData> = {};
+protected order: Partial<UserData> = {};
 protected events: IEvents;
 errors: IErrors;
+
 
 constructor(events: IEvents){
     this.events = events;
@@ -15,21 +16,18 @@ constructor(events: IEvents){
   getBasket(): Readonly<IProduct[]> {
     return [...this.basket]
   }
-  getOrder(): Readonly<Partial<OrderData>> {
-    this.order.items = this.getBasket().map((item) => item.id)
-    this.order.total = this.calculateTotal()
+  getOrder(): Readonly<Partial<UserData>> {
     return { ...this.order }
   }
 
   addToBasket(product: IProduct): void {
     if (this.basket.some(item => item.id === product.id)) return
     this.basket = [...this.basket, product]
-    //this.updateOrder()
     this.events.emit('basketChanged')
     
   }
 
-    setOrder(field: keyof OrderData, value: any): void {
+    setOrder(field: keyof UserData, value:string): void {
         this.order = {
             ...this.order,
             [field]: value
@@ -102,23 +100,14 @@ getError(field: keyof IErrors): string | undefined {
 
   removeFromBasket(productId: string): void {
     this.basket = this.basket.filter(item => item.id !== productId)
-    this.updateOrder()
     this.events.emit('basketChanged')
   }
 
   clearBasket(): void {
     this.basket = []
-    this.updateOrder()
     this.events.emit('basketChanged')
   }
-  private updateOrder(): void {
-    this.order = {
-      ...this.order,
-      items: this.basket.map(item => item.id),
-      total: this.calculateTotal()
-    }
-    this.events.emit('orderChanged')
-  }
+
      calculateTotal(): number {
     return this.basket.reduce((sum, item) => sum + item.price, 0)
   }

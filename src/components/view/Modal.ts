@@ -1,6 +1,6 @@
 import { IEvents } from "../base/events";
 import { Component } from "./Component";
-export interface IModal {
+ interface IModal {
    content:HTMLElement;
 }
 export class Modal extends Component<IModal>{

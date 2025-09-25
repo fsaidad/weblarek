@@ -1,5 +1,5 @@
 import { EventEmitter } from './components/base/events';
-import { BasketModel, IErrors } from './components/model/BasketModel';
+import { BasketModel, IErrors,  } from './components/model/BasketModel';
 import { ProductApi } from './components/model/ProductApi';
 import { ProductModel } from './components/model/ProductModel';
 import { Basket } from './components/view/Basket';
@@ -9,10 +9,11 @@ import { Core } from './components/view/Core';
 import { Modal } from './components/view/Modal';
 import { OrderAddress } from './components/view/OrderAddress';
 import { Product } from './components/view/Product';
+import { ProductGallery } from './components/view/ProductGallery';
 import { ProductOpen } from './components/view/ProductOpen';
 import { Success } from './components/view/Success';
 import './scss/styles.scss';
-import { IProduct, OrderPaymentMethod } from './types';
+import { IOrderData, IProduct, OrderPaymentMethod, UserData } from './types';
 import { CDN_URL, API_URL } from './utils/constants';
 import { cloneTemplate } from './utils/utils';
 
@@ -39,21 +40,22 @@ const modalTemplate:HTMLElement = document.querySelector('#modal-container')
 
 
 
-const CorePage:HTMLElement = document.querySelector('.page__wrapper')
+const сorePageWrapper:HTMLElement = document.querySelector('.page__wrapper')
 
 const modal = new Modal(modalTemplate,evt)
 const content = new ProductOpen(cloneTemplate(productOpenTemplate),evt)
-const BasketModal = new Basket(cloneTemplate(basketTemplate),evt);
+const basketModal = new Basket(cloneTemplate(basketTemplate),evt);
 const orderMethod = new OrderAddress(cloneTemplate(orderTemplate),evt)
 const contacts = new Contacts(cloneTemplate(contactsTemplate),evt);
+const successView = new Success(cloneTemplate(succesTemplate),evt);
 
 
-const corePage = new Core(CorePage, evt)
+const corePage = new Core(сorePageWrapper, evt)
 
 //загрузка товаров
 evt.on('products:loaded', () => {
   const productsArray = productModel.getProducts().map((product) => {
-    const productInts = new Product(cloneTemplate(cardCatalogTemplate), evt, false)
+    const productInts = new ProductGallery(cloneTemplate(cardCatalogTemplate), evt, false)
     return productInts.render(product)
   });
   corePage.render({coreGallery:productsArray})
@@ -66,9 +68,9 @@ evt.on('productSelected', (data: {card:IProduct}) => {
   const {card} = data;
   const {description,title,category,price, image, id} = productModel.getProductById(card.id);
   const productOpen = {description,title,category,price, image, id};
-  const InBasket = basketModel.isProductInBasket(productOpen.id);
-  content.isInBasket = InBasket;
-  modal.content = content.render(productOpen,);
+  const inBasket = basketModel.isProductInBasket(productOpen.id);
+  content.isInBasket = inBasket;
+  modal.content = content.render(productOpen);
   modal.open();
 })
 
@@ -81,19 +83,19 @@ evt.on('product:add', (data: {card:IProduct}) =>{
 })
 
 evt.on('basket:open', () =>{
-   modal.content = BasketModal.render()
+   modal.content = basketModal.render()
 modal.open();
 })
 
 evt.on('basketChanged',()=>{
   corePage.render({counter:basketModel.getBasket().length});
-  BasketModal.price = basketModel.calculateTotal();
+  basketModal.price = basketModel.calculateTotal();
       const productsArray = basketModel.getBasket().map((product, index) => {
     const productInts = new CardBasket(cloneTemplate(productBasketTemplate), evt)
       productInts.index = index + 1;
     return productInts.render(product)
   });
-    BasketModal.products = productsArray;
+    basketModal.products = productsArray;
 } )
 
 evt.on('order:start', () => {
@@ -113,8 +115,9 @@ evt.on('order.address:change',(data:{field:string,value:string})=>{
   basketModel.setOrder('address', data.value); 
 })
 
-evt.on('payment:changed', (paymentData: {method: 'card' | 'cash'}) => {
-    basketModel.setOrder('payment',paymentData.method);
+evt.on('order.payment:change', (data:{field:string,value:string}) => {
+    basketModel.setOrder('payment', data.value);
+    orderMethod.payment = `${data.value}`
 });
 
 evt.on('errors:changed', (errors:IErrors)=>{
@@ -128,21 +131,25 @@ evt.on('order:submit',()=>{
   modal.content = contacts.render({valid:basketModel.validateOrder()});
   modal.open();
 })
+
 evt.on('contacts:submit', ()=>{
-  const successView = new Success(cloneTemplate(succesTemplate),evt);
-  modal.content = successView.render({total:basketModel.calculateTotal()})
-   const OrderPost = basketModel.getOrder();
-  api.postOrder(OrderPost)
+     const orderData: IOrderData = {
+    ...(basketModel.getOrder()), 
+    items: basketModel.getBasket().map((item) => item.id), 
+    total: basketModel.calculateTotal() 
+  };
+  api.postOrder(orderData)
   .then(data =>{
+    modal.content = successView.render({total: data.total})
     console.log('Заказ успешно отправлен', data)
-  })
-    .catch(error => {
-    console.error('Ошибка отправки заказа:', error);
-  });
   basketModel.clearBasket();
   basketModel.clearOrder();
   contacts.reset();
   orderMethod.reset();
+  })
+    .catch(error => {
+    console.error('Ошибка отправки заказа:', error);
+  });
 })
 
 evt.on('contacts.email:change', (data:{field:string,value:string})=>{

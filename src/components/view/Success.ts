@@ -1,6 +1,6 @@
 import { IEvents } from "../base/events";
 import { Component } from "./Component";
-export interface ISuccess{
+ interface ISuccess{
     total:Number;
 }
 export class Success extends Component<ISuccess>{

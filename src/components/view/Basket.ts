@@ -2,7 +2,7 @@ import { createElement } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { Component } from "./Component";
 
-export interface IBasket {
+interface IBasket {
     price:HTMLElement;
     products:HTMLElement[];
 }

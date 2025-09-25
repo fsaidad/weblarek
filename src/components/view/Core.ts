@@ -43,7 +43,7 @@ set lock(isLocked: boolean) {
     
 } 
 
-export interface ICore{
+interface ICore{
     counter: number;
     coreGallery: HTMLElement[];
     lock:boolean;

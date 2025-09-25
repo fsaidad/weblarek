@@ -1,4 +1,4 @@
-import { IProduct, OrderData, OrderPost} from "../../types";
+import { IOrderData, IProduct, IResult, UserData } from "../../types";
 import { Api, ApiListResponse } from "../base/api";
 
 
@@ -35,8 +35,8 @@ export class ProductApi extends Api implements IApiClient {
      * @param order - Данные заказа
      * @returns Promise с результатом оформления заказа
      */
-    async postOrder(order: OrderData): Promise<OrderPost> {
-        return this.post<OrderPost>('/order', order);
+    async postOrder(order: IOrderData): Promise<IResult> {
+        return this.post<IResult>('/order', order);
     }
 
     /**
@@ -51,10 +51,9 @@ export class ProductApi extends Api implements IApiClient {
         };
     }
 }
-
-export interface IApiClient {
+interface IApiClient {
   getProducts(): Promise<IProduct[]>;
   getProduct(id: string): Promise<IProduct>;
-  postOrder(order: OrderData): Promise<OrderPost>;
+  postOrder(order: IOrderData): Promise<IResult>;
 }
 

@@ -15,21 +15,26 @@ export type IProduct = {
 export type OrderPaymentMethod = 'card' | 'cash';
 
 //заказ
-export type OrderData = {
+export type UserData = {
+  payment: OrderPaymentMethod;
+  address: string;
+  email: string;
+  phone: string;
+};
+
+export interface IOrderData{
   payment?: OrderPaymentMethod;
   address?: string;
   email?: string;
   phone?: string;
-  total?: number;
-  items?: string[];
-};
-
-export interface OrderPost {
-  id:string;
-  total:number;
+  total?:number;
+  items?:string[];
+}
+export interface IResult{
+  id: string;
+  total: number;
 }
 
-export type TModalCart = Pick<IProduct, 'title'|'price'>
 
 export interface IProductModel {
  getProducts(): Readonly<IProduct[]>;
@@ -41,9 +46,9 @@ export interface IBasketModel {
     errors: IErrors;
     
     getBasket(): Readonly<IProduct[]>;
-    getOrder(): Readonly<Partial<OrderData>>;
+    getOrder(): Readonly<Partial<UserData>>;
     addToBasket(product: IProduct): void;
-    setOrder(field: keyof OrderData, value: any): void;
+    setOrder(field: keyof UserData, value: any): void;
     validateOrder(): boolean;
     getCombinedOrderErrors(): string;
     getCombinedContactErrors(): string;
@@ -54,3 +59,12 @@ export interface IBasketModel {
     clearBasket(): void;
     calculateTotal(): number;
 }
+
+export const CATEGORY_CLASSES: Record<string, string> = {
+    'другое': 'card__category_other',
+    'дополнительное': 'card__category_additional',
+    'кнопка': 'card__category_button',
+    'хард-скил': 'card__category_hard',
+    'софт-скил': 'card__category_soft'
+}
+export type ProductCategory = keyof typeof CATEGORY_CLASSES

@@ -1,13 +1,12 @@
-import { IEvents } from "../base/events";
-import { Component } from "./Component";
-import { Modal } from "./Modal";
-import { Product } from "./Product";
 
-export interface IproductOpen {
+import { IEvents } from "../base/events";
+import { ProductGallery } from "./ProductGallery";
+
+interface IproductOpen {
     description: string;
     isInBasket:boolean;
 }
-export class ProductOpen extends Product<IproductOpen>{
+export class ProductOpen extends ProductGallery<IproductOpen>{
     protected buttonProduct: HTMLButtonElement;
     protected events:IEvents;
     protected cardText:HTMLElement;
@@ -30,15 +29,23 @@ export class ProductOpen extends Product<IproductOpen>{
     });
     }
 
+
+
 set isInBasket(boolean: boolean) {
     this._isInBasket = boolean;
     this.buttonProduct.textContent = boolean ? 'Убрать из корзины' : 'В корзину';
 }
     set description(text:string){
         this.cardText.textContent = text;
-                if(this.cardText.textContent == 'Будет стоять над душой и не давать прокрастинировать.'){
-                this.buttonProduct.disabled = true;
-                this.buttonProduct.textContent = 'Недоступно'
-            }else{this.buttonProduct.disabled = false}
+    }
+
+    set price(price:number|null){
+        if (price == null){
+            this.buttonProduct.disabled = true;
+            this.buttonProduct.textContent = 'Недоступно'
+        }else{
+            this.buttonProduct.disabled = false;
+            super.price = price;
+        }
     }
 }

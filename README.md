@@ -60,17 +60,27 @@ yarn build
 Заказ
 
 ```
-  type OrderData = {
-  payment: OrderPaymentMethod;
-  address: string;
-  email: string;
-  phone: string;
-  total: number;
-  items: string[];
+ interface IOrderData{
+  payment?: OrderPaymentMethod;
+  address?: string;
+  email?: string;
+  phone?: string;
+  total?:number;
+  items?:string[];
 }
 
 type OrderPaymentMethod = 'card' | 'cash'
 ```
+
+```
+Данные пользователя
+```
+ type UserData = {
+  payment: OrderPaymentMethod;
+  address: string;
+  email: string;
+  phone: string;
+};
 
 ### Базовый код
 
@@ -118,7 +128,7 @@ constructor(events: IEvents)
 
 В полях класса хранятся следующие данные:
 - basket: IProduct[] - массив товаров в корзине
-- order: Partial<OrderData> - данные заказа
+- order: Partial<UserData> - данные заказа
 - events: IEvents - система событий
 - errors: IErrors - объект с ошибками валидаци
 
@@ -137,9 +147,9 @@ constructor(events: IEvents)
 
 Управление заказом:
 
-- `getOrder(): Readonly<Partial<OrderData>>` - получить копию данных заказа
+- `getOrder(): Readonly<Partial<UserData>>` - получить копию данных заказа
 
-- `setOrder(field: keyof OrderData, value: any): void` - установить значение для поля заказа
+- `setOrder(field: keyof UserData, value: any): void` - установить значение для поля заказа
 
 - `clearOrder(): void` - очистить данные заказа
 
@@ -214,41 +224,54 @@ constructor(events: IEvents)
 
 - `set lock(isLocked: boolean)` - блокирует и разблокирует прокрутку страницы
 
+#### Класс CoreGallery<T>
+```
+Рассширяет базовый класс Product, для отображения детальной информации и является родителем для класса ProductOpen
+```
+Конструктор:
+
+`constructor(container:HTMLElement, events:IEvents, clickable: boolean)`
+
+Поля класса:
+- `productCategory:HTMLElement` - категория товара
+- `productImage:HTMLImageElement` - изоображение товара
+- `events` - шина событий
+
+Методы:
+
+- `image: string` - Сеттер для изображения товара. Устанавливает src и alt.
+
+- `category: string` - Сеттер для категории товара. 
+Автоматически применяет CSS-классы в зависимости от категории.
 #### Класс Product<T> (Базовый компонент карточки товара)
 ```
 Универсальный компонент для отображения карточки товара. Управляет основными элементами: изображением, ценой, названием и категорией.
 ```
 Конструктор:
 
-`constructor(container: HTMLElement, events: IEvents, clickable: boolean)`
+`constructor(container: HTMLElement, events: IEvents)`
 
 Поля:
 
 - `events` — шина событий
 
-- `productImage` — изображение товара
-
 - `productPrice` — элемент цены
 
 - `productTitle` — название товара
 
-- `productCategory` — категория товара
+
 
 методы:
 
 - `price: number` - Сеттер для установки цены. При null отображает "Бесценно".
 
-- `category: string` - Сеттер для категории товара. 
-Автоматически применяет CSS-классы в зависимости от категории.
 
 - `title: string` - Сеттер для названия товара.
-
-- `image: string` - Сеттер для изображения товара. Устанавливает src и alt.
 
 
 #### Класс ProductOpen
 ```
-Расширяет базовый класс Product для отображения детальной информации о товаре. Управляет кнопкой добавления/удаления из корзины и описанием товара.
+Расширяет класс ProductGallery для отображения детальной информации о товаре. Управляет кнопкой добавления/удаления из корзины и описанием товара.
 ```
 Конструктор:
 
@@ -268,6 +291,8 @@ constructor(events: IEvents)
 - `description(text:string)` - добавляет карточке описание
 
 - `isInBasket(boolean: boolean)` - меняет название кнопки в зависимости от того есть ли товар в корзине
+
+- `set price(price:number|null)` - назначает цену карточке. Также если карточка имеет стоимость null, блокирует кнопку и меняет ее название.
 
 #### Класс Basket
 ```
@@ -368,7 +393,7 @@ constructor(events: IEvents)
 
 Методы:
 
-- `togglePaymentMethod(method: 'card' | 'cash'): void` - переключает способ оплаты
+- `set payment(value: string)` - переключает способ оплаты
 
 #### Класс Contacts
 

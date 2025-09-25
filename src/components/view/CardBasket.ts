@@ -1,11 +1,8 @@
 import { IEvents } from "../base/events";
-import { Component } from "./Component";
-import { Modal } from "./Modal";
 import { Product } from "./Product";
 
-export interface ICardBasket {
+interface ICardBasket {
     index:HTMLElement;
-    product:HTMLElement;
 }
 export class CardBasket extends Product<ICardBasket>{
 protected basketIndex:HTMLElement;
