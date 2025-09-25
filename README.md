@@ -224,7 +224,7 @@ constructor(events: IEvents)
 
 - `set lock(isLocked: boolean)` - блокирует и разблокирует прокрутку страницы
 
-#### Класс CoreGallery<T>
+#### Класс ProductGallery<T>
 ```
 Рассширяет базовый класс Product, для отображения детальной информации и является родителем для класса ProductOpen
 ```
